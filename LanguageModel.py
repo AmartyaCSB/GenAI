@@ -1,4 +1,5 @@
 import random
+import math
 from collections import defaultdict
 
 
@@ -43,7 +44,19 @@ class BasicLanguageModel:
     def get_probability(self):
         pass
     def compute_perplexity(self):
-        pass
+        tokens = self.test_data
+        num_tokens = len(tokens)
+        log_likelihood = 0
+
+        for i in range(num_tokens):
+            context_start = max(0,i-self.n_params)
+            context = tuple(tokens[context_start:i])
+            token = tokens[i]
+            probability = self.get_probability(token, context)
+            log_likelihood += math.log(probability)
+        average_log_likelihood = log_likelihood / num_tokens
+        perplexity = math.exp(-average_log_likelihood)
+        return perplexity
 
 if __name__ == "__main__":
     model = BasicLanguageModel()
