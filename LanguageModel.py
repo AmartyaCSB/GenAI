@@ -24,11 +24,30 @@ class BasicLanguageModel:
                 counts[context][next_token] = counts[context][next_token] + 1
 
 
-    def predict_next_token(self):
-        pass
+    def predict_next_token(self, context):
+        for n in range(self.n_params, 1, -1):
+            if len(context) >= n-1:
+                context_n = tuple(context[-(n-1):])
+                counts = self.state[n-1].get(context_n)
+                if counts:
+                    return max(counts.items(), key=lambda x:x[1])[0]
+        unigram_counts = self.state[0]. get(())
+        if unigram_counts:
+            return max(unigram_counts.items(), key=lambda x:x[1])[0]
+        return None
+        
+
+
     def generate_token(self):
         pass
     def get_probability(self):
         pass
     def compute_perplexity(self):
         pass
+
+if __name__ == "__main__":
+    model = BasicLanguageModel()
+    model.train()
+    def chat(message, history):
+        return model.generate_text(message, 10)
+    perplexity = model.compute_perplexity()
